@@ -1,0 +1,3 @@
+/Users/taewoohong/dev/git/safe_zone/build/CMakeFiles/main.dir
+/Users/taewoohong/dev/git/safe_zone/build/CMakeFiles/edit_cache.dir
+/Users/taewoohong/dev/git/safe_zone/build/CMakeFiles/rebuild_cache.dir
