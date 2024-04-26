@@ -1,5 +1,6 @@
 # Set the minimum CMake version
 cmake_minimum_required(VERSION 3.10)
+set(CMAKE_CXX_STANDARD 17)
 
 # Define the project name and language
 project(ZoneTests LANGUAGES CXX)

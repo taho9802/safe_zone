@@ -11,8 +11,9 @@ Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col, int thick){
 }
 
 bool Zone::draw(cv::Mat &frame) const {
+  std::cout <<  "Drawing zone with " << vertices.size() << " vertices" << std::endl;
   if(vertices.size() < 3) {
-    std::cout << "Zone must have at least 3 vertices" << std::endl;
+    std::cout << "Zone must have at least 3 unique vertices" << std::endl;
     return false;
   }
   cv::fillPoly(frame, poly, color, cv::LINE_8, 0, cv::Point());
