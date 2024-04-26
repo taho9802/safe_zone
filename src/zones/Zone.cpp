@@ -1,13 +1,14 @@
 #include "../include/zones/Zone.hpp"
 #include <iostream>
 #include <opencv2/highgui.hpp>
-Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col, int thick)
-    : color(col), thickness(thick) {
-      for (const auto& vertex: verts) {
-        vertices.insert(vertex);
-      }
-      poly.push_back(verts);
-    }
+Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col, int thick){
+  for(int i = 0; i < verts.size(); i++){
+    vertices.insert(verts[i]);
+  }
+  for(auto vertices_iter = vertices.begin(); vertices_iter != vertices.end(); vertices_iter++){
+    poly.push_back({*vertices_iter});
+  }
+}
 
 bool Zone::draw(cv::Mat &frame) const {
   if(vertices.size() < 3) {

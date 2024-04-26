@@ -9,7 +9,7 @@
 
 class Zone{
   private:
-    Point_Set vertices;
+    Point_Set vertices; //unordered set that contains zone verticies as cv::Points
     std::vector<std::vector<cv::Point>> poly;
     cv::Scalar color;
     int thickness;
