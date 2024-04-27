@@ -1,3 +1,4 @@
+
 #include "../include/zones/Zone.hpp"
 #include "gtest/gtest.h"
 
@@ -10,7 +11,7 @@ TEST_P(Zone_Constructor, CheckVertices) {
   cv::Scalar color(225, 0, 0);
   int thickness = 1;
 
-  Zone test_zone(verts, color, thickness);
+  Zone test_zone(verts, color);
   Point_Set result_vertices = test_zone.get_vertices();
   EXPECT_EQ(result_vertices.size(), expected);
 }
@@ -33,7 +34,7 @@ TEST_P(Insufficient_Verts , DrawWithInsufficientVertices) {
   int thickness = 1;
   cv::Mat frame = cv::Mat::zeros(100, 100, CV_8UC3);
 
-  Zone test_zone(verts, color, thickness);
+  Zone test_zone(verts, color);
   bool results = test_zone.draw(frame);
 
   EXPECT_FALSE(results);
@@ -57,7 +58,7 @@ TEST_P(Sufficient_Verts, DrawWithSufficientVertices) {
   int thickness = 1;
   cv::Mat frame = cv::Mat::zeros(100, 100, CV_8UC3);
 
-  Zone test_zone(verts, color, thickness);
+  Zone test_zone(verts, color);
   bool results = test_zone.draw(frame);
 
   EXPECT_TRUE(results);

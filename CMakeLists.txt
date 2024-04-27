@@ -13,9 +13,10 @@ message(STATUS "OpenCV include directory: ${OpenCV_INCLUDE_DIRS}")
 
 # Include the OpenCV headers
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Specify the source file to compile into an executable
-add_executable(main src/main.cpp)
+add_executable(main src/main.cpp src/zones/Zone.cpp)
 
 # Link the executable to the OpenCV libraries
 target_link_libraries(main ${OpenCV_LIBS})

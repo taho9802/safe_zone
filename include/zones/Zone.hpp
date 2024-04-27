@@ -15,7 +15,7 @@ class Zone{
     int thickness;
 
   public:
-    Zone(std::vector<cv::Point> verts, cv::Scalar col = cv::Scalar(0, 255, 0), int thick = 2);
+    Zone(std::vector<cv::Point> verts, cv::Scalar col);
     bool draw(cv::Mat &frame) const;
     bool contains(cv::Point &pt) const;
     Point_Set get_vertices() const;
