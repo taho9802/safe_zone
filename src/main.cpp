@@ -21,8 +21,8 @@ int main() {
   int tick = 0;
   int fps;
   std::time_t time_begin = std::time(0);
-  std::vector<cv::Point> verts = {cv::Point{0,0}, cv::Point{0, 100}, cv::Point{100, 100}};
-  cv::Scalar color(0, 255, 0);
+  std::vector<cv::Point> verts = {cv::Point{0,0}, cv::Point{100, 0}, cv::Point{100, 100}, cv::Point{0, 100}};
+  cv::Scalar color(225, 0, 0);
 
   Zone test_zone(verts, color);
 

@@ -12,15 +12,14 @@ class Zone{
     Point_Set vertices; //unordered set that contains zone verticies as cv::Points
     std::vector<std::vector<cv::Point>> poly;
     cv::Scalar color;
-    int thickness;
+    int zone_id;
 
   public:
     Zone(std::vector<cv::Point> verts, cv::Scalar col);
     bool draw(cv::Mat &frame) const;
-    bool contains(cv::Point &pt) const;
+    bool contains(cv::Point &pt);
     Point_Set get_vertices() const;
     cv::Scalar get_color() const;
-    int get_thickness() const;
 };
 
 #endif // ZONE_HPP

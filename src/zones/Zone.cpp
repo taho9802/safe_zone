@@ -5,11 +5,7 @@ Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col){
   for(int i = 0; i < verts.size(); i++){
     vertices.insert(verts[i]);
   }
-  std::vector<cv::Point> vert_vect;
-  for(auto vertices_iter = vertices.begin(); vertices_iter != vertices.end(); vertices_iter++){
-    vert_vect.push_back({*vertices_iter});
-  }
-  poly = {vert_vect};
+  poly = {std::vector<cv::Point>(vertices.begin(), vertices.end())};
 }
 
 bool Zone::draw(cv::Mat &frame) const {
@@ -22,7 +18,7 @@ bool Zone::draw(cv::Mat &frame) const {
   return true;
 }
 
-bool Zone::contains(cv::Point &pt) const {
+bool Zone::contains(cv::Point &pt){
   return cv::pointPolygonTest(poly, pt, false) >= 0;
 }
 
@@ -32,8 +28,4 @@ Point_Set Zone::get_vertices() const {
 
 cv::Scalar Zone::get_color() const {
   return color;
-}
-
-int Zone::get_thickness() const {
-  return thickness;
 }
