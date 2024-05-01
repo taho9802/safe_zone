@@ -6,6 +6,7 @@ Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col){
     vertices.insert(verts[i]);
   }
   poly = {std::vector<cv::Point>(vertices.begin(), vertices.end())};
+  zone_id = -1;
 }
 
 bool Zone::draw(cv::Mat &frame) const {
@@ -28,4 +29,8 @@ Point_Set Zone::get_vertices() const {
 
 cv::Scalar Zone::get_color() const {
   return color;
+}
+
+int Zone::get_id() const {
+  return zone_id;
 }

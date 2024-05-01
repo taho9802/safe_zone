@@ -20,6 +20,7 @@ class Zone{
     bool contains(cv::Point &pt);
     Point_Set get_vertices() const;
     cv::Scalar get_color() const;
+    int get_id() const;
 };
 
 #endif // ZONE_HPP
