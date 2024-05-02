@@ -10,16 +10,14 @@
 class Zone{
   private:
     Point_Set vertices; //unordered set that contains zone verticies as cv::Points
-    std::vector<std::vector<cv::Point>> poly;
-    cv::Scalar color;
+    std::vector<cv::Point> poly;
     int zone_id;
 
   public:
-    Zone(std::vector<cv::Point> verts, cv::Scalar col);
-    bool draw(cv::Mat &frame) const;
+    Zone(std::vector<cv::Point> verts);
+    Zone(std::vector<cv::Point> verts, int id);
     bool contains(cv::Point &pt);
-    Point_Set get_vertices() const;
-    cv::Scalar get_color() const;
+    std::vector<cv::Point> get_poly() const;
     int get_id() const;
 };
 
