@@ -1,34 +1,28 @@
 #include "../include/zones/Zone.hpp"
 #include <iostream>
 #include <opencv2/highgui.hpp>
-Zone::Zone(std::vector<cv::Point> verts, cv::Scalar col){
-  for(int i = 0; i < verts.size(); i++){
-    vertices.insert(verts[i]);
+Zone::Zone(std::vector<cv::Point> vertices){
+  for(int i = 0; i < vertices.size(); i++){
+    this->vertices.insert(vertices[i]);
   }
-  poly = {std::vector<cv::Point>(vertices.begin(), vertices.end())};
+  poly = {std::vector<cv::Point>(this->vertices.begin(), this->vertices.end())};
   zone_id = -1;
 }
 
-bool Zone::draw(cv::Mat &frame) const {
-  std::cout <<  "Drawing zone with " << vertices.size() << " vertices" << std::endl;
-  if(vertices.size() < 3) {
-    std::cout << "Zone must have at least 3 unique vertices" << std::endl;
-    return false;
+Zone::Zone(std::vector<cv::Point> vertices, int zone_id){
+  for(int i = 0; i < vertices.size(); i++) {
+    this->vertices.insert(vertices[i]);
   }
-  cv::fillPoly(frame, poly, color);
-  return true;
+  poly = {std::vector<cv::Point>(this->vertices.begin(), this->vertices.end())};
+  this->zone_id = zone_id;
 }
 
 bool Zone::contains(cv::Point &pt){
   return cv::pointPolygonTest(poly, pt, false) >= 0;
 }
 
-Point_Set Zone::get_vertices() const {
-  return vertices;
-}
-
-cv::Scalar Zone::get_color() const {
-  return color;
+std::vector<cv::Point> Zone::get_poly() const {
+  return poly;
 }
 
 int Zone::get_id() const {

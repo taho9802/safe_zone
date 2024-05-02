@@ -55,6 +55,7 @@ Zone* Zone_Manager::get_zone(cv::Point pt) {
       return zones[i];
     }
   }
+  return nullptr;
 }
 
 void Zone_Manager::draw_zones(cv::Mat &frame) {
