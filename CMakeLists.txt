@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find OpenCV on the system and require it to be present
-find_package(OpenCV 4.9 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 # Display where OpenCV was found and its included directories
 message(STATUS "Found OpenCV: ${OpenCV_CONFIG_PATH} (found version \"${OpenCV_VERSION}\")")
