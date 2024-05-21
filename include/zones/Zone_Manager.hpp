@@ -18,10 +18,11 @@ class Zone_Manager {
   public:
     Zone_Manager();
     Zone_Manager(cv::Scalar color);
-    void add_zone(std::vector<cv::Point> vertices);
+    bool add_zone(std::vector<cv::Point> vertices);
     Zone* get_zone(cv::Point pt);
     void delete_zone();
     void draw_zones(cv::Mat &frame);
+    bool destroy_zone(int zone_id);
     void destroy_all_zones();
 };
 
