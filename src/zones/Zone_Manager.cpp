@@ -62,6 +62,10 @@ Zone* Zone_Manager::get_zone(cv::Point pt) {
   return nullptr;
 }
 
+int Zone_Manager::get_num_zones(){
+  return zones.size();
+}
+
 void Zone_Manager::draw_zones(cv::Mat &frame) {
   bool zones_valid = validate_zones();
   if(!zones_valid) {

@@ -1,71 +1,43 @@
+#include "../include/zones/Zone_Manager.hpp"
+#include <gtest/gtest.h>
+#include <vector>
 
-#include "../include/zones/Zone.hpp"
-#include "gtest/gtest.h"
+void populate_zone(std::vector<std::vector<cv::Point>> verts, Zone_Manager zm){
+  for(int i = 0; i < verts.size(); i++){
+    zm.add_zone(verts[i]);
+  }
+}
 
 // Define the test fixture for constructor tests
-class Zone_Constructor : public ::testing::TestWithParam<std::tuple<std::vector<cv::Point>, int>> {};
+class Zone_Manager_Test : public testing::Test {
+  protected:
+    Zone_Manager test = Zone_Manager();
+};
 
-// Parameterized test for checking vertices set correctly in the constructor
-TEST_P(Zone_Constructor, CheckVertices) {
-  auto [verts, expected] = GetParam();
-  cv::Scalar color(225, 0, 0);
-  int thickness = 1;
-
-  Zone test_zone(verts, color);
-  Point_Set result_vertices = test_zone.get_vertices();
-  EXPECT_EQ(result_vertices.size(), expected);
+TEST_F(Zone_Manager_Test, add_valid_zone){
+  std::vector<cv::Point> vertices = {cv::Point(0, 0), cv::Point(0, 50), cv::Point(50, 50)};
+  bool status = test.add_zone(vertices);
+  EXPECT_TRUE(status);
+  EXPECT_EQ(test.get_num_zones(), 1);
 }
 
-// Instantiate test cases for the constructor tests
-INSTANTIATE_TEST_SUITE_P(DefaultConstructorTests, Zone_Constructor, ::testing::Values(
-  std::make_tuple(std::vector<cv::Point>{{10, 0}, {20, 10}, {30, 20}}, 3),
-  std::make_tuple(std::vector<cv::Point>{{0, 0}, {20, 20}, {20, 20}}, 2),
-  std::make_tuple(std::vector<cv::Point>{{10, 10}, {10, 10}, {10, 10}}, 1),
-  std::make_tuple(std::vector<cv::Point>{{10, 20}, {10, 15}, {0, 10}, {10, 0}}, 4)
-));
-
-// Define the test fixture for drawing tests
-class Insufficient_Verts : public ::testing::TestWithParam<std::vector<cv::Point>> {};
-
-// Parameterized test for drawing with insufficient vertices
-TEST_P(Insufficient_Verts , DrawWithInsufficientVertices) {
-  std::vector<cv::Point> verts = GetParam();
-  cv::Scalar color(225, 0, 0);
-  int thickness = 1;
-  cv::Mat frame = cv::Mat::zeros(100, 100, CV_8UC3);
-
-  Zone test_zone(verts, color);
-  bool results = test_zone.draw(frame);
-
-  EXPECT_FALSE(results);
+TEST_F(Zone_Manager_Test, add_invalid_zone){
+  std::vector<cv::Point> vertices = {cv::Point(0, 0), cv::Point(0, 50)};
+  bool status = test.add_zone(vertices);
+  EXPECT_FALSE(status);
+  EXPECT_EQ(test.get_num_zones(), 0);
 }
 
-// Instantiate test cases for drawing tests with insufficient vertices
-INSTANTIATE_TEST_SUITE_P(InsufficientVertices, Insufficient_Verts , ::testing::Values(
-  std::vector<cv::Point>({cv::Point(0,0), cv::Point(10, 10), cv::Point(0, 0)}),
-  std::vector<cv::Point>({cv::Point(0,0), cv::Point(10, 10)}),
-  std::vector<cv::Point>({cv::Point(0,0)}),
-  std::vector<cv::Point>({})
-));
+TEST_F(Zone_Manager_Test, remove_zone){
+  std::vector<std::vector<cv::Point>> verts = {
+    {cv::Point(0, 0), cv::Point(0, 50), cv::Point(50, 50)},
+    {cv::Point(0, 80), cv::Point(80, 80), cv::Point(160, 160)},
+    {cv::Point(80, 0), cv::Point(160, 0), cv::Point(160, 80)}
+  };
 
-class Sufficient_Verts : public ::testing::TestWithParam<std::vector<cv::Point>> {};
-// Instantiate test cases for drawing tests with sufficient vertices
-
-// Parameterized test for drawing with sufficient vertices
-TEST_P(Sufficient_Verts, DrawWithSufficientVertices) {
-  std::vector<cv::Point> verts = GetParam();
-  cv::Scalar color(225, 0, 0);
-  int thickness = 1;
-  cv::Mat frame = cv::Mat::zeros(100, 100, CV_8UC3);
-
-  Zone test_zone(verts, color);
-  bool results = test_zone.draw(frame);
-
-  EXPECT_TRUE(results);
+  populate_zone(verts, test);
+  bool status = test.destroy_zone(0);
+  
+  EXPECT_TRUE(status);
+  EXPECT_EQ(test.get_num_zones(), 2);
 }
-
-INSTANTIATE_TEST_SUITE_P(SufficientVertices, Sufficient_Verts, ::testing::Values(
-  std::vector<cv::Point>{cv::Point{0, 10}, cv::Point{10, 0}, cv::Point{5, 5}},
-  std::vector<cv::Point>{cv::Point{0, 15}, cv::Point{5, 10}, cv::Point{10, 5}, cv::Point{0, 10}},
-  std::vector<cv::Point>{cv::Point{0, 0}, cv::Point{10, 0}, cv::Point{5, 5}, cv::Point{10, 10}, cv::Point{0, 10}}
-));

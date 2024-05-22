@@ -20,6 +20,7 @@ class Zone_Manager {
     Zone_Manager(cv::Scalar color);
     bool add_zone(std::vector<cv::Point> vertices);
     Zone* get_zone(cv::Point pt);
+    int get_num_zones();
     void delete_zone();
     void draw_zones(cv::Mat &frame);
     bool destroy_zone(int zone_id);
