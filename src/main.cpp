@@ -15,7 +15,6 @@ int find_avail_cams(){
   int index = 0;
   cv::VideoCapture cap;
   while(true){
-    std::cout << "checking index" + index << std::endl;
     cap.open(index);
     if(!cap.isOpened()){
       index++;
@@ -30,7 +29,7 @@ int find_avail_cams(){
 
 int main() {
   int cam_index = find_avail_cams();
-  std::cout << "Available camera index: " + cam_index << std::endl;
+  std::cout << "Available camera index: " << + cam_index << std::endl;
   cv::VideoCapture cap(cam_index);
   if(!cap.isOpened()){
     return -1;
