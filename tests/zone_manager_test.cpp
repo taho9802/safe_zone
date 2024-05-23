@@ -1,8 +1,9 @@
 #include "../include/zones/Zone_Manager.hpp"
 #include <gtest/gtest.h>
 #include <vector>
+#include <iostream>
 
-void populate_zone(std::vector<std::vector<cv::Point>> verts, Zone_Manager zm){
+void populate_zone(std::vector<std::vector<cv::Point>> verts, Zone_Manager &zm){
   for(int i = 0; i < verts.size(); i++){
     zm.add_zone(verts[i]);
   }
@@ -37,7 +38,8 @@ TEST_F(Zone_Manager_Test, remove_zone){
 
   populate_zone(verts, test);
   bool status = test.destroy_zone(0);
-  
+
+
   EXPECT_TRUE(status);
   EXPECT_EQ(test.get_num_zones(), 2);
 }

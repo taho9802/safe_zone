@@ -79,6 +79,7 @@ bool Zone_Manager::destroy_zone(int zone_id){
   for(int i = 0; zones.size(); i++){
     if(zones[i]->get_id() == zone_id){
       delete zones[i];
+      zones.erase(zones.begin() + i);
       return true;
     }
   }
