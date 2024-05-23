@@ -5,13 +5,32 @@
 #include <ctime>
 #include <opencv2/highgui.hpp>
 #include "../include/zones/Zone.hpp"
+#include "../include/zones/Zone_Manager.hpp"
 
 void draw_fps(cv::Mat &frame, int fps) {
   cv::putText(frame, std::to_string(fps), cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1);
 }
 
+int find_avail_cams(){
+  int index = 0;
+  cv::VideoCapture cap;
+  while(true){
+    cap.open(index);
+    if(!cap.isOpened()){
+      index++;
+    }
+    else {
+      cap.release();
+      break;
+    }
+  }
+  return index;
+}
+
 int main() {
-  cv::VideoCapture cap(0);
+  int cam_index = find_avail_cams();
+  std::cout << "Available camera index: " << + cam_index << std::endl;
+  cv::VideoCapture cap(cam_index);
   if(!cap.isOpened()){
     return -1;
   }
@@ -24,8 +43,8 @@ int main() {
   std::vector<cv::Point> verts = {cv::Point{0,0}, cv::Point{100, 0}, cv::Point{100, 100}, cv::Point{0, 100}};
   cv::Scalar color(225, 0, 0);
 
-  Zone test_zone(verts, color);
-
+  Zone_Manager test = Zone_Manager();
+  test.add_zone(verts);
 
   while(true) {
     cap >> frame;
@@ -44,7 +63,7 @@ int main() {
       frame_counter = 0;
     }
     draw_fps(frame, fps);
-    test_zone.draw(frame);
+    test.draw_zones(frame);
     cv::imshow("TESTING" ,frame);
     int key = cv::waitKey(1);
     if((key & 0xFF) == 27 || (key & 0xFF) == 'q') {

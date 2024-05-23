@@ -37,12 +37,16 @@ int Zone_Manager::create_zone_id(){
   return total_created_zones;
 }
 
-void Zone_Manager::add_zone(std::vector<cv::Point> vertices){
+bool Zone_Manager::add_zone(std::vector<cv::Point> vertices){
+  if(vertices.size() < 3) {
+    return false;
+  }
   int zone_id = create_zone_id();
   Zone *new_zone = new Zone(vertices, zone_id);
   total_created_zones++;
   zones.push_back(new_zone);
   zone_polygons.push_back(new_zone->get_poly());
+  return true;
 }
 
 Zone* Zone_Manager::get_zone(cv::Point pt) {
@@ -58,6 +62,10 @@ Zone* Zone_Manager::get_zone(cv::Point pt) {
   return nullptr;
 }
 
+int Zone_Manager::get_num_zones(){
+  return zones.size();
+}
+
 void Zone_Manager::draw_zones(cv::Mat &frame) {
   bool zones_valid = validate_zones();
   if(!zones_valid) {
@@ -65,6 +73,17 @@ void Zone_Manager::draw_zones(cv::Mat &frame) {
     return;
   }
   cv::fillPoly(frame, zone_polygons, color);
+}
+
+bool Zone_Manager::destroy_zone(int zone_id){
+  for(int i = 0; zones.size(); i++){
+    if(zones[i]->get_id() == zone_id){
+      delete zones[i];
+      zones.erase(zones.begin() + i);
+      return true;
+    }
+  }
+  return false;
 }
 
 void Zone_Manager::destroy_all_zones() {
