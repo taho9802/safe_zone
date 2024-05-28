@@ -16,7 +16,11 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Specify the source file to compile into an executable
-add_executable(main src/main.cpp src/zones/Zone.cpp src/zones/Zone_Manager.cpp)
+add_executable(main 
+    src/main.cpp
+    src/capture/Real_Time_Capture.cpp
+    src/user_interface/User_Interface.cpp
+)
 
 # Link the executable to the OpenCV libraries
 target_link_libraries(main ${OpenCV_LIBS})
