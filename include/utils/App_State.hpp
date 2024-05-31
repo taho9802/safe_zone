@@ -20,8 +20,8 @@ enum class Sub_Mode {
 
 
 struct App_Mode {
-  std::atomic<Main_Mode> main_mode{Main_Mode::NONE};
-  std::atomic<Sub_Mode> sub_mode{Sub_Mode::NUETRAL};
+  Main_Mode main_mode{Main_Mode::NONE};
+  Sub_Mode sub_mode{Sub_Mode::NUETRAL};
 };
 
 extern App_Mode app_state;
