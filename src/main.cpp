@@ -2,6 +2,7 @@
 #include <thread>
 #include <pthread.h>
 #include <sched.h>
+#include <unistd.h>
 #include "../include/user_interface/User_Interface.hpp"
 #include "../include/utils/App_State.hpp"
 #include "../include/capture/Real_Time_Capture.hpp"
@@ -30,6 +31,30 @@ void set_thread_priority(std::thread& thread, int policy, int priority) {
   }
 }
 
+void printAvailableCores() {
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    pid_t pid = getpid();
+
+    if (sched_getaffinity(pid, sizeof(cpu_set_t), &cpuset) == -1) {
+        perror("sched_getaffinity");
+        return;
+    }
+
+    std::cout << "Available CPU cores: ";
+    for (int i = 0; i < CPU_SETSIZE; i++) {
+        if (CPU_ISSET(i, &cpuset)) {
+            std::cout << i << " ";
+        }
+    }
+    std::cout << std::endl;
+}
+
+void* threadFunction(void* arg) {
+    printAvailableCores();
+    return nullptr;
+}
+
 int main() {
   cpu_set_t cpu_set;
   CPU_ZERO(&cpu_set);
@@ -40,9 +65,16 @@ int main() {
 
   std::cout << "Starting CV thread..." << std::endl;
   std::thread cv_thread(base_loop);
-  set_thread_affinity(cv_thread, 2);
+  set_thread_affinity(cv_thread, 1);
   std::cout << "CV thread started on core 1." << std::endl;
-  user_interface();
-  cv_thread.detach();
+  std::thread ui_thread(user_interface);
+  set_thread_affinity(ui_thread, 0);
+  cv_thread.join();
+  ui_thread.join();
+
+  // pthread_t thread;
+  // int result = pthread_create(&thread, nullptr, threadFunction, nullptr);
+
+  // pthread_join(thread, nullptr);
   return 0;
 }

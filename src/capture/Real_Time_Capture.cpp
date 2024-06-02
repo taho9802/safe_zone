@@ -5,30 +5,31 @@
 #include <opencv2/highgui.hpp>
 #include <atomic>
 #include <iostream>
+#include <thread>
 
 //simple loop will be a standard loop when the app state is at NONE state
-void simple_loop(cv::VideoCapture* cap_pointer){
-  if(!cap_pointer->isOpened()){
+void simple_loop(cv::VideoCapture& cap_obj){
+  if(!cap_obj.isOpened()){
     std::cerr << "Cap object is not open at simple loop function" << std::endl;
     return;
   }
 
   cv::Mat frame;
   while(app_state.main_mode == Main_Mode::NONE){
-    std::cout << "running in simple loop" << std::endl;
-    *cap_pointer >> frame;    
+    // std::cout << "hmm" << std::endl;
+    cap_obj >> frame;    
     if(frame.empty()){
       std::cerr << "Frame failed to capture at simple loop function" << std::endl;
     }
     cv::putText(frame, "Current Mode: None..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     cv::imshow("SZone", frame);
-    cv::waitKey(1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
   return; 
 }
 
-void add_zone(cv::VideoCapture* cap_pointer){
-  if(!cap_pointer->isOpened()){
+void add_zone(cv::VideoCapture& cap_obj){
+  if(!cap_obj.isOpened()){
     std::cerr << "Cap object failed to open at add_zone loop" << std::endl;
     return; 
   }
@@ -40,7 +41,7 @@ void add_zone(cv::VideoCapture* cap_pointer){
       app_state.main_mode = Main_Mode::MONITOR;
       return;
     }
-    *cap_pointer >> frame;
+    cap_obj >> frame;
     if(frame.empty()) {
       std::cerr << "Frame failed to capture at add_zone loop function" << std::endl;
     }
@@ -59,8 +60,8 @@ void add_zone(cv::VideoCapture* cap_pointer){
   return;
 }
 
-void delete_zone(cv::VideoCapture* cap_pointer){
-  if(!cap_pointer->isOpened()) {
+void delete_zone(cv::VideoCapture& cap_obj){
+  if(!cap_obj.isOpened()) {
     std::cerr << "Cap object failed to open at delete_zone loop" << std::endl;
     return;
   }
@@ -73,7 +74,7 @@ void delete_zone(cv::VideoCapture* cap_pointer){
       app_state.main_mode = Main_Mode::MONITOR;
       return;
     }
-    *cap_pointer >> frame;
+    cap_obj >> frame;
     if(frame.empty()){
       std::cerr << "Frame failed to capture at delete_zone loop function" << std::endl;
     }
@@ -86,8 +87,8 @@ void delete_zone(cv::VideoCapture* cap_pointer){
 }
 
 
-void monitor_loop(cv::VideoCapture* cap_pointer) {
-  if(!cap_pointer->isOpened()){
+void monitor_loop(cv::VideoCapture& cap_obj) {
+  if(!cap_obj.isOpened()){
     std::cerr << "Cap object failed to open at monitor_loop" << std::endl;
     return;
   }
@@ -100,6 +101,7 @@ void monitor_loop(cv::VideoCapture* cap_pointer) {
       app_state.sub_mode = Sub_Mode::NUETRAL;
       return;
     }
+    cap_obj >> frame;
     //load zones using zone_manager and all the other logic here//
     cv::putText(frame, "Current Mode: Monitor mode..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     cv::imshow("SZone", frame);
@@ -117,27 +119,26 @@ void base_loop() {
   }
 
   while(app_state.main_mode != Main_Mode::KILL_PROGRAM) {
-    cv::waitKey(1);
     switch (app_state.main_mode){
       case Main_Mode::ADD_ZONE:
         //call add_zone function loop
-        add_zone(&cap);
+        add_zone(cap);
         //makig sure that the submode is back to default after the loop is exited
         app_state.sub_mode = Sub_Mode::NUETRAL;
         break;
       case Main_Mode::DELETE_ZONE:
         //call delete_zone function loop
-        delete_zone(&cap);
+        delete_zone(cap);
         //same for the rest of these
         app_state.sub_mode = Sub_Mode::NUETRAL;
         break;
       case Main_Mode::MONITOR:
-        monitor_loop(&cap);
+        monitor_loop(cap);
         // call monitor loop
         break;
       default:
         std::cout << "in default switch loop" << std::endl;
-        simple_loop(&cap);
+        simple_loop(cap);
         //call basic loop function
         break;
     }

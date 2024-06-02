@@ -5,34 +5,36 @@
 #include <opencv2/highgui.hpp>
 #include <cctype>
 #include <iostream>
-
-App_Mode test;
+#include <thread>
+#include <chrono>
 
 void user_interface() {
-  std::cout << "user_inface is running" << std::endl;
-    while(test.main_mode != Main_Mode::KILL_PROGRAM) {
-      std::cout << "loop fnished running" << std::endl;
+  // std::cout << "user_inface is running" << std::endl;
+    while(app_state.main_mode != Main_Mode::KILL_PROGRAM) {
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
+      // std::cout << "hmm" << std::endl;
       char input = cv::waitKey(1);
       if(input == 'a') {
-        test.main_mode = Main_Mode::ADD_ZONE;
-        test.sub_mode = Sub_Mode::NUETRAL;
+        app_state.main_mode = Main_Mode::ADD_ZONE;
+        app_state.sub_mode = Sub_Mode::NUETRAL;
       }
       else if(input == 'd') {
-        test.main_mode = Main_Mode::DELETE_ZONE;
-        test.sub_mode = Sub_Mode::NUETRAL;
+        app_state.main_mode = Main_Mode::DELETE_ZONE;
+        app_state.sub_mode = Sub_Mode::NUETRAL;
       }
       else if(input == 'q') {
-        test.main_mode = Main_Mode::KILL_PROGRAM;
+        app_state.main_mode = Main_Mode::KILL_PROGRAM;
       }
       else if(input == 's'){
-        if(test.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
-          test.sub_mode = Sub_Mode::SAVE;
+        if(app_state.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
+          app_state.sub_mode = Sub_Mode::SAVE;
         }
       }
       else if(input == 'c'){
-        if(test.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
-          test.sub_mode = Sub_Mode::QUIT;
+        if(app_state.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
+          app_state.sub_mode = Sub_Mode::QUIT;
         }
       }
+      std::this_thread::yield();
     }
 }
