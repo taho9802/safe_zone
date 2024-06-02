@@ -23,7 +23,6 @@ void simple_loop(cv::VideoCapture& cap_obj){
     }
     cv::putText(frame, "Current Mode: None..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     cv::imshow("SZone", frame);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
   return; 
 }
@@ -53,9 +52,8 @@ void add_zone(cv::VideoCapture& cap_obj){
       app_state.sub_mode = Sub_Mode::NUETRAL;
       return;
     //add logic to add the zone to the zone manager.
-    cv::imshow("SZone", frame);
-    cv::waitKey(1);
     }
+    cv::imshow("SZone", frame);
   }
   return;
 }
@@ -82,7 +80,6 @@ void delete_zone(cv::VideoCapture& cap_obj){
     //add left click logic here and find out which zone it is//
     //then delete zone//
     cv::imshow("SZone", frame);
-    cv::waitKey(1);
   }
 }
 
@@ -105,7 +102,6 @@ void monitor_loop(cv::VideoCapture& cap_obj) {
     //load zones using zone_manager and all the other logic here//
     cv::putText(frame, "Current Mode: Monitor mode..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     cv::imshow("SZone", frame);
-    cv::waitKey(1);
   }
 }
 
@@ -121,6 +117,7 @@ void base_loop() {
   while(app_state.main_mode != Main_Mode::KILL_PROGRAM) {
     switch (app_state.main_mode){
       case Main_Mode::ADD_ZONE:
+        std::cout << "in add zone loop" << std::endl;
         //call add_zone function loop
         add_zone(cap);
         //makig sure that the submode is back to default after the loop is exited
