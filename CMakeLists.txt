@@ -19,6 +19,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 add_executable(main 
     src/main.cpp
     src/capture/Real_Time_Capture.cpp
+    src/capture/Capture_Loop_Utils.cpp
     src/user_interface/User_Interface.cpp
 )
 
