@@ -15,24 +15,24 @@ void user_interface() {
       // std::cout << "hmm" << std::endl;
       char input = cv::waitKey(1);
       if(input == 'a') {
-        app_state.main_mode = Main_Mode::ADD_ZONE;
-        app_state.sub_mode = Sub_Mode::NUETRAL;
+        app_state.main_mode.store(Main_Mode::ADD_ZONE);
+        app_state.sub_mode.store(Sub_Mode::NEUTRAL);
       }
       else if(input == 'd') {
-        app_state.main_mode = Main_Mode::DELETE_ZONE;
-        app_state.sub_mode = Sub_Mode::NUETRAL;
+        app_state.main_mode.store(Main_Mode::DELETE_ZONE);
+        app_state.sub_mode.store(Sub_Mode::NEUTRAL);
       }
       else if(input == 'q') {
         app_state.main_mode = Main_Mode::KILL_PROGRAM;
       }
       else if(input == 's'){
-        if(app_state.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
-          app_state.sub_mode = Sub_Mode::SAVE;
+        if(app_state.main_mode.load() == Main_Mode::ADD_ZONE || app_state.main_mode.load() == Main_Mode::DELETE_ZONE) {
+          app_state.sub_mode.store(Sub_Mode::SAVE);
         }
       }
       else if(input == 'c'){
-        if(app_state.main_mode == Main_Mode::ADD_ZONE || app_state.main_mode == Main_Mode::DELETE_ZONE) {
-          app_state.sub_mode = Sub_Mode::QUIT;
+        if(app_state.main_mode.load() == Main_Mode::ADD_ZONE || app_state.main_mode.load() == Main_Mode::DELETE_ZONE) {
+          app_state.sub_mode.store(Sub_Mode::QUIT);
         }
       }
       std::this_thread::yield();

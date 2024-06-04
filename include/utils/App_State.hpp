@@ -15,13 +15,13 @@ enum class Main_Mode {
 enum class Sub_Mode {
   SAVE,
   QUIT,
-  NUETRAL,
+  NEUTRAL,
 };
 
 
 struct App_Mode {
-  Main_Mode main_mode{Main_Mode::NONE};
-  Sub_Mode sub_mode{Sub_Mode::NUETRAL};
+  std::atomic<Main_Mode> main_mode {Main_Mode::NONE};
+  std::atomic<Sub_Mode> sub_mode {Sub_Mode::NEUTRAL};
 };
 
 extern App_Mode app_state;

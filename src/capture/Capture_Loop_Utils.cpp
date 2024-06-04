@@ -13,7 +13,7 @@ void simple_loop(cv::VideoCapture& cap_obj){
   }
 
   cv::Mat frame;
-  while(app_state.main_mode == Main_Mode::NONE){
+  while(app_state.main_mode.load() == Main_Mode::NONE){
     // std::cout << "hmm" << std::endl;
     cap_obj >> frame;    
     if(frame.empty()){
@@ -32,10 +32,10 @@ void add_zone(cv::VideoCapture& cap_obj){
   }
 
   cv::Mat frame;
-  while(app_state.main_mode == Main_Mode::ADD_ZONE) {
-    if(app_state.sub_mode == Sub_Mode::QUIT) {
-      app_state.sub_mode = Sub_Mode::NUETRAL;
-      app_state.main_mode = Main_Mode::MONITOR;
+  while(app_state.main_mode.load() == Main_Mode::ADD_ZONE) {
+    if(app_state.sub_mode.load() == Sub_Mode::QUIT) {
+      app_state.sub_mode.store(Sub_Mode::NEUTRAL);
+      app_state.main_mode.store(Main_Mode::MONITOR);
       return;
     }
     cap_obj >> frame;
@@ -44,10 +44,10 @@ void add_zone(cv::VideoCapture& cap_obj){
     }
     cv::putText(frame, "Current Mode: Add zone..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     //add left-click event listener here//
-    if(app_state.sub_mode == Sub_Mode::SAVE){
+    if(app_state.sub_mode.load() == Sub_Mode::SAVE){
       std::cout << "Saving points" << std::endl;
-      app_state.main_mode = Main_Mode::MONITOR;
-      app_state.sub_mode = Sub_Mode::NUETRAL;
+      app_state.main_mode.store(Main_Mode::MONITOR);
+      app_state.sub_mode.store(Sub_Mode::NEUTRAL);
       return;
     //add logic to add the zone to the zone manager.
     }
@@ -63,11 +63,11 @@ void delete_zone(cv::VideoCapture& cap_obj){
   }
 
   cv::Mat frame;
-  while(app_state.main_mode == Main_Mode::DELETE_ZONE) {
-    if(app_state.sub_mode == Sub_Mode::QUIT){
+  while(app_state.main_mode.load() == Main_Mode::DELETE_ZONE) {
+    if(app_state.sub_mode.load() == Sub_Mode::QUIT){
       std::cout << "exiting delete mode" << std::endl;
-      app_state.sub_mode = Sub_Mode::NUETRAL;
-      app_state.main_mode = Main_Mode::MONITOR;
+      app_state.sub_mode.store(Sub_Mode::NEUTRAL);
+      app_state.main_mode.store(Main_Mode::MONITOR);
       return;
     }
     cap_obj >> frame;
@@ -89,11 +89,11 @@ void monitor_loop(cv::VideoCapture& cap_obj) {
   }
 
   cv::Mat frame;
-  while(app_state.main_mode == Main_Mode::MONITOR) {
-    if(app_state.sub_mode == Sub_Mode::QUIT) {
+  while(app_state.main_mode.load() == Main_Mode::MONITOR) {
+    if(app_state.sub_mode.load() == Sub_Mode::QUIT) {
       std::cout << "exiting mointor mode" << std::endl;
-      app_state.main_mode = Main_Mode::NONE;
-      app_state.sub_mode = Sub_Mode::NUETRAL;
+      app_state.main_mode.store(Main_Mode::NONE);
+      app_state.sub_mode.store(Sub_Mode::NEUTRAL);
       return;
     }
     cap_obj >> frame;

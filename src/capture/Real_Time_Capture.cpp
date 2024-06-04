@@ -16,20 +16,20 @@ void base_loop() {
    std::cerr << "Error, camera not opened" << std::endl;
   }
 
-  while(app_state.main_mode != Main_Mode::KILL_PROGRAM) {
-    switch (app_state.main_mode){
+  while(app_state.main_mode.load() != Main_Mode::KILL_PROGRAM) {
+    switch (app_state.main_mode.load()){
       case Main_Mode::ADD_ZONE:
         std::cout << "in add zone loop" << std::endl;
         //call add_zone function loop
         add_zone(cap);
         //makig sure that the submode is back to default after the loop is exited
-        app_state.sub_mode = Sub_Mode::NUETRAL;
+        app_state.sub_mode.store(Sub_Mode::NEUTRAL);
         break;
       case Main_Mode::DELETE_ZONE:
         //call delete_zone function loop
         delete_zone(cap);
         //same for the rest of these
-        app_state.sub_mode = Sub_Mode::NUETRAL;
+        app_state.sub_mode.store(Sub_Mode::NEUTRAL);
         break;
       case Main_Mode::MONITOR:
         monitor_loop(cap);
