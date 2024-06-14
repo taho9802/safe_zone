@@ -1,5 +1,6 @@
 #include "../../include/capture/Capture_Loop_Utils.hpp"
 #include "../../include/utils/App_State.hpp"
+#include "../../include/zones/Zone_Manager.hpp"
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
@@ -14,7 +15,6 @@ void simple_loop(cv::VideoCapture& cap_obj){
 
   cv::Mat frame;
   while(app_state.main_mode.load() == Main_Mode::NONE){
-    // std::cout << "hmm" << std::endl;
     cap_obj >> frame;    
     if(frame.empty()){
       std::cerr << "Frame failed to capture at simple loop function" << std::endl;

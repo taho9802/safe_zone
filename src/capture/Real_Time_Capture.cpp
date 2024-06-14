@@ -1,6 +1,7 @@
 #include "../../include/utils/App_State.hpp"
 #include "../../include/capture/Real_Time_Capture.hpp"
 #include "../../include/capture/Capture_Loop_Utils.hpp"
+#include "../../include/zones/Zone_Manager.hpp"
 #include <opencv2/core.hpp>
 #include <iostream>
 
@@ -9,12 +10,14 @@
 void base_loop() {
   std::cout << "running base loop" << std::endl;
   cv::VideoCapture cap(0);
-  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
-  cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 2048);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 2048);
 
   if(!cap.isOpened()){
    std::cerr << "Error, camera not opened" << std::endl;
   }
+
+
 
   while(app_state.main_mode.load() != Main_Mode::KILL_PROGRAM) {
     switch (app_state.main_mode.load()){

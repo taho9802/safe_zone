@@ -3,6 +3,7 @@
 #define APP_STATE_HPP
 
 #include <atomic>
+#include <opencv2/core.hpp>
 
 enum class Main_Mode {
   KILL_PROGRAM,
@@ -22,6 +23,7 @@ enum class Sub_Mode {
 struct App_Mode {
   std::atomic<Main_Mode> main_mode {Main_Mode::NONE};
   std::atomic<Sub_Mode> sub_mode {Sub_Mode::NEUTRAL};
+  // std::atomic<cv::Point> mouse_left_location;
 };
 
 extern App_Mode app_state;
