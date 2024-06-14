@@ -28,6 +28,7 @@ void user_interface() {
     // std::cout << "hmm" << std::endl;
     if(click_point.x != -1 && click_point.y != -1){
       std::cout << "click detected" << std::endl;
+      app_state.mouse_left_location.store(click_point);
       click_point = cv::Point(-1, -1);
     }
     char input = cv::waitKey(1);

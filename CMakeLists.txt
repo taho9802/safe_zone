@@ -21,6 +21,8 @@ add_executable(main
     src/capture/Real_Time_Capture.cpp
     src/capture/Capture_Loop_Utils.cpp
     src/user_interface/User_Interface.cpp
+    src/zones/Zone.cpp
+    src/zones/Zone_Manager.cpp
 )
 
 # Link the executable to the OpenCV libraries
