@@ -10,8 +10,10 @@
 void base_loop() {
   std::cout << "running base loop" << std::endl;
   cv::VideoCapture cap(0);
-  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 2048);
-  cap.set(cv::CAP_PROP_FRAME_WIDTH, 2048);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
+
+  
 
   if(!cap.isOpened()){
    std::cerr << "Error, camera not opened" << std::endl;

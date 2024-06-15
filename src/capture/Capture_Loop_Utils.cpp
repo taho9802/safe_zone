@@ -75,6 +75,8 @@ void add_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
 }
 
 void delete_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
+  app_state.mouse_left_location.store(cv::Point(-1, -1));
+
   if(!cap_obj.isOpened()) {
     std::cerr << "Cap object failed to open at delete_zone loop" << std::endl;
     return;
@@ -94,6 +96,16 @@ void delete_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
     }
     cv::putText(frame, "Current Mode: Delete zone..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     //add left click logic here and find out which zone it is//
+    if(app_state.mouse_left_location.load() != cv::Point(-1, -1)) {
+      int del_zone_id = zm.zone_finder(app_state.mouse_left_location.load());
+      zm.destroy_zone(del_zone_id);
+      app_state.mouse_left_location.store(cv::Point(-1, -1));
+    }
+
+    if(zm.get_num_zones() != 0) {
+      zm.draw_zones(frame);
+    }
+
     //then delete zone//
     cv::imshow("SZone", frame);
   }
@@ -117,7 +129,9 @@ void monitor_loop(cv::VideoCapture& cap_obj, Zone_Manager& zm) {
     cap_obj >> frame;
     //load zones using zone_manager and all the other logic here//
     cv::putText(frame, "Current Mode: Monitor mode..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
-    zm.draw_zones(frame);
+    if(zm.get_num_zones() != 0) {
+      zm.draw_zones(frame);
+    }
     cv::imshow("SZone", frame);
   }
 }
