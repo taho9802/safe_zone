@@ -3,25 +3,12 @@
 #include <opencv2/core.hpp>
 #include <iostream>
 
-Zone_Manager::Zone_Manager() {
-  zones = {};
-  color = cv::Scalar(255,0,0); //default color red
-  total_created_zones = 0;
-}
-
-Zone_Manager::Zone_Manager(cv::Scalar color) {
-  zones = {};
-  this->color = color;
-  total_created_zones = 0;
-}
-
-int Zone_Manager::zone_finder(cv::Point pt) {
-  for(int i = 0; i < zones.size(); i++){
-    if(zones[i]->contains(pt)){
-      return zones[i]->get_id();
-    }
+void Zone_Manager::update_zone_polygons() {
+  std::vector<std::vector<cv::Point>> zone_polys;
+  for(int i = 0; i < zones.size(); i++) {
+    zone_polys.push_back(zones[i]->get_poly());
   }
-  return -1;
+  this->zone_polygons = zone_polys;
 }
 
 bool Zone_Manager::validate_zones(){
@@ -37,6 +24,18 @@ int Zone_Manager::create_zone_id(){
   return total_created_zones;
 }
 
+Zone_Manager::Zone_Manager() {
+  zones = {};
+  color = cv::Scalar(255,0,0); //default color red
+  total_created_zones = 0;
+}
+
+Zone_Manager::Zone_Manager(cv::Scalar color) {
+  zones = {};
+  this->color = color;
+  total_created_zones = 0;
+}
+
 bool Zone_Manager::add_zone(std::vector<cv::Point> vertices){
   if(vertices.size() < 3) {
     return false;
@@ -45,7 +44,7 @@ bool Zone_Manager::add_zone(std::vector<cv::Point> vertices){
   Zone *new_zone = new Zone(vertices, zone_id);
   total_created_zones++;
   zones.push_back(new_zone);
-  zone_polygons.push_back(new_zone->get_poly());
+  update_zone_polygons();
   return true;
 }
 
@@ -61,6 +60,16 @@ Zone* Zone_Manager::get_zone(cv::Point pt) {
   }
   return nullptr;
 }
+
+int Zone_Manager::zone_finder(cv::Point pt) {
+  for(int i = 0; i < zones.size(); i++){
+    if(zones[i]->contains(pt)){
+      return zones[i]->get_id();
+    }
+  }
+  return -1;
+}
+
 
 int Zone_Manager::get_num_zones(){
   return zones.size();
@@ -80,6 +89,7 @@ bool Zone_Manager::destroy_zone(int zone_id){
     if(zones[i]->get_id() == zone_id){
       delete zones[i];
       zones.erase(zones.begin() + i);
+      update_zone_polygons();
       return true;
     }
   }
@@ -90,5 +100,6 @@ void Zone_Manager::destroy_all_zones() {
   for(int i = 0; i < zones.size(); i++) {
     delete zones[i];
   }
+  update_zone_polygons();
   zones.clear();
 }

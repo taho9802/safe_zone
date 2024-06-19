@@ -1,10 +1,8 @@
-// #ifndef USER_INTERFACE
-// #define USER_INTERFACE
+#ifndef USER_INTERFACE_HPP
+#define USER_INTERFACE_HPP
 
-// #include <opencv2/core.hpp>
+#include <opencv2/core.hpp>
 
-// class User_Interface {
+void user_interface();
 
-// }
-  
-// #endif // USER_INTERFACE
+#endif //USER_INTERFACE_HPP

@@ -1,76 +1,80 @@
 #include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 #include <thread>
-#include <ctime>
-#include <opencv2/highgui.hpp>
-#include "../include/zones/Zone.hpp"
-#include "../include/zones/Zone_Manager.hpp"
+#include <pthread.h>
+#include <sched.h>
+#include <unistd.h>
+#include "../include/user_interface/User_Interface.hpp"
+#include "../include/utils/App_State.hpp"
+#include "../include/capture/Real_Time_Capture.hpp"
 
-void draw_fps(cv::Mat &frame, int fps) {
-  cv::putText(frame, std::to_string(fps), cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 1);
+App_Mode app_state;
+
+void set_thread_affinity(std::thread& thread, int core_id){
+  cpu_set_t cpu_set;
+  CPU_ZERO(&cpu_set);
+  CPU_SET(core_id, &cpu_set);
+  int res = pthread_setaffinity_np(thread.native_handle(), sizeof(cpu_set_t), &cpu_set);
+  if(res != 0) {
+    std::cerr << "failed to set thread affinity with error code: " << res << std::endl;
+  }
+  return;
 }
 
-int find_avail_cams(){
-  int index = 0;
-  cv::VideoCapture cap;
-  while(true){
-    cap.open(index);
-    if(!cap.isOpened()){
-      index++;
-    }
-    else {
-      cap.release();
-      break;
-    }
+void set_thread_priority(std::thread& thread, int policy, int priority) {
+  pthread_t nativeHandle = thread.native_handle();
+  struct sched_param param;
+  param.sched_priority = priority;
+  int ret = pthread_setschedparam(nativeHandle, policy, &param);
+
+  if (ret != 0) {
+    std::cerr << "Failed to set thread priority: " << ret << std::endl;
   }
-  return index;
+}
+
+void printAvailableCores() {
+    cpu_set_t cpuset;
+    CPU_ZERO(&cpuset);
+    pid_t pid = getpid();
+
+    if (sched_getaffinity(pid, sizeof(cpu_set_t), &cpuset) == -1) {
+        perror("sched_getaffinity");
+        return;
+    }
+
+    std::cout << "Available CPU cores: ";
+    for (int i = 0; i < CPU_SETSIZE; i++) {
+        if (CPU_ISSET(i, &cpuset)) {
+            std::cout << i << " ";
+        }
+    }
+    std::cout << std::endl;
+}
+
+void* threadFunction(void* arg) {
+    printAvailableCores();
+    return nullptr;
 }
 
 int main() {
-  int cam_index = find_avail_cams();
-  std::cout << "Available camera index: " << + cam_index << std::endl;
-  cv::VideoCapture cap(cam_index);
-  if(!cap.isOpened()){
-    return -1;
+  cpu_set_t cpu_set;
+  CPU_ZERO(&cpu_set);
+  CPU_SET(4, &cpu_set);
+  if (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpu_set) != 0) {
+    std::cerr << "Failed to set main thread affinity" << std::endl;
   }
-  cv::Mat frame;
-  cv::namedWindow("TESTING", cv::WINDOW_AUTOSIZE);
-  int frame_counter = 0;
-  int tick = 0;
-  int fps;
-  std::time_t time_begin = std::time(0);
-  std::vector<cv::Point> verts = {cv::Point{0,0}, cv::Point{100, 0}, cv::Point{100, 100}, cv::Point{0, 100}};
-  cv::Scalar color(225, 0, 0);
 
-  Zone_Manager test = Zone_Manager();
-  test.add_zone(verts);
+  std::cout << "Starting CV thread..." << std::endl;
+  std::thread cv_thread(base_loop);
+  set_thread_affinity(cv_thread, 1);
+  std::cout << "CV thread started on core 1." << std::endl;
+  std::thread ui_thread(user_interface);
+  set_thread_affinity(ui_thread, 0);
+  cv_thread.join();
+  ui_thread.join();
 
-  while(true) {
-    cap >> frame;
-    cv::flip(frame, frame, 1);
-    if (frame.empty()){
-      std::cerr << "Failed to capture frame" << std::endl;
-      continue;
-    }
+  // pthread_t thread;
+  // int result = pthread_create(&thread, nullptr, threadFunction, nullptr);
 
-    frame_counter++;
-
-    std::time_t time_now = std::time(0) - time_begin;
-    if(time_now - tick >= 1){
-      tick++;
-      fps = frame_counter;
-      frame_counter = 0;
-    }
-    draw_fps(frame, fps);
-    test.draw_zones(frame);
-    cv::imshow("TESTING" ,frame);
-    int key = cv::waitKey(1);
-    if((key & 0xFF) == 27 || (key & 0xFF) == 'q') {
-      break;
-    }
-  }
-  cap.release();
-  cv::destroyAllWindows();
+  // pthread_join(thread, nullptr);
   return 0;
 }
