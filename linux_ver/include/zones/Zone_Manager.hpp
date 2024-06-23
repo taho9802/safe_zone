@@ -12,7 +12,7 @@ class Zone_Manager {
     int total_created_zones;
     cv::Scalar color;
 
-    int zone_finder(cv::Point pt);
+    void update_zone_polygons();
     bool validate_zones();
     int create_zone_id();
   public:
@@ -20,8 +20,8 @@ class Zone_Manager {
     Zone_Manager(cv::Scalar color);
     bool add_zone(std::vector<cv::Point> vertices);
     Zone* get_zone(cv::Point pt);
+    int zone_finder(cv::Point pt);
     int get_num_zones();
-    void delete_zone();
     void draw_zones(cv::Mat &frame);
     bool destroy_zone(int zone_id);
     void destroy_all_zones();
