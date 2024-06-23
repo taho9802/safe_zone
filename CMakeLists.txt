@@ -3,6 +3,7 @@ project(safe_zone)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(OpenCV_DIR "C:/OpenCV/opencv/build/x64/vc16/lib")
 
 # Find OpenCV on the system and require it to be present
 find_package(OpenCV REQUIRED)

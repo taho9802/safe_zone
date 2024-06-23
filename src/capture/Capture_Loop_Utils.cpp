@@ -1,11 +1,11 @@
 #include "../../include/capture/Capture_Loop_Utils.hpp"
 #include "../../include/utils/App_State.hpp"
 #include "../../include/zones/Zone_Manager.hpp"
+#include "../../include/user_interface/Input_Collector.hpp"
 #include <opencv2/imgproc.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <vector>
-
 
 void simple_loop(cv::VideoCapture& cap_obj){
   if(!cap_obj.isOpened()){
@@ -15,19 +15,21 @@ void simple_loop(cv::VideoCapture& cap_obj){
 
   cv::Mat frame;
   while(app_state.main_mode.load() == Main_Mode::NONE){
-    cap_obj >> frame;    
+    cap_obj >> frame;
     if(frame.empty()){
       std::cerr << "Frame failed to capture at simple loop function" << std::endl;
     }
     cv::putText(frame, "Current Mode: None..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     cv::imshow("SZone", frame);
+    char input = cv::waitKey(1);
+    user_data.last_key_input.store(input);
   }
   return; 
 }
 
 void add_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
   //set last stored point to default to ensure collection consistency//
-  app_state.mouse_left_location.store(cv::Point(-1, -1));
+  user_data.mouse_left_location.store(cv::Point(-1, -1));
   std::vector<cv::Point> potential_verts;
   if(!cap_obj.isOpened()){
     std::cerr << "Cap object failed to open at add_zone loop" << std::endl;
@@ -47,9 +49,9 @@ void add_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
     }
     cv::putText(frame, "Current Mode: Add zone..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     
-    if(app_state.mouse_left_location.load() != cv::Point(-1, -1)){
-      potential_verts.push_back(app_state.mouse_left_location.load());
-      app_state.mouse_left_location.store(cv::Point(-1, -1));
+    if(user_data.mouse_left_location.load() != cv::Point(-1, -1)){
+      potential_verts.push_back(user_data.mouse_left_location.load());
+      user_data.mouse_left_location.store(cv::Point(-1, -1));
     }
 
     if(potential_verts.size() != 0) {
@@ -69,13 +71,15 @@ void add_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
       app_state.sub_mode.store(Sub_Mode::NEUTRAL);
       return;
     }
+    char input = cv::waitKey(1);
+    user_data.last_key_input.store(input);
     cv::imshow("SZone", frame);
   }
   return;
 }
 
 void delete_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
-  app_state.mouse_left_location.store(cv::Point(-1, -1));
+  user_data.mouse_left_location.store(cv::Point(-1, -1));
 
   if(!cap_obj.isOpened()) {
     std::cerr << "Cap object failed to open at delete_zone loop" << std::endl;
@@ -96,10 +100,11 @@ void delete_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
     }
     cv::putText(frame, "Current Mode: Delete zone..", cv::Point(10, 30), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(225, 0, 0), 2);
     //add left click logic here and find out which zone it is//
-    if(app_state.mouse_left_location.load() != cv::Point(-1, -1)) {
-      int del_zone_id = zm.zone_finder(app_state.mouse_left_location.load());
+    if(user_data.mouse_left_location.load() != cv::Point(-1, -1)) {
+      int del_zone_id = zm.zone_finder(user_data
+        .mouse_left_location.load());
       zm.destroy_zone(del_zone_id);
-      app_state.mouse_left_location.store(cv::Point(-1, -1));
+      user_data.mouse_left_location.store(cv::Point(-1, -1));
     }
 
     if(zm.get_num_zones() != 0) {
@@ -107,6 +112,7 @@ void delete_zone(cv::VideoCapture& cap_obj, Zone_Manager& zm){
     }
 
     //then delete zone//
+    user_data.last_key_input.store(cv::waitKey(1));
     cv::imshow("SZone", frame);
   }
 }
@@ -132,6 +138,7 @@ void monitor_loop(cv::VideoCapture& cap_obj, Zone_Manager& zm) {
     if(zm.get_num_zones() != 0) {
       zm.draw_zones(frame);
     }
+    user_data.last_key_input.store(cv::waitKey(1));
     cv::imshow("SZone", frame);
   }
 }

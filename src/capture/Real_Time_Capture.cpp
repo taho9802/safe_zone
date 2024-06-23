@@ -2,14 +2,29 @@
 #include "../../include/capture/Real_Time_Capture.hpp"
 #include "../../include/capture/Capture_Loop_Utils.hpp"
 #include "../../include/zones/Zone_Manager.hpp"
+#include "../../include/user_interface/Input_Collector.hpp"
 #include <opencv2/core.hpp>
 #include <iostream>
 
 //simple loop will be a standard loop when the app state is at NONE state
 
+void on_mouse(int event, int x, int y, int, void* user_input) {
+  if (event == cv::EVENT_LBUTTONDOWN) {
+    cv::Point* click_point = static_cast<cv::Point*>(user_input);
+    click_point->x = x;
+    click_point->y = y;
+    std::cout << "Mouse clicked at (" << x << ", " << y << ")" << std::endl;
+    user_data.mouse_left_location.store(cv::Point(x, y));
+  }
+}
+
 void base_loop() {
   std::cout << "running base loop" << std::endl;
   cv::VideoCapture cap(0);
+  cv::namedWindow("SZone", cv::WINDOW_NORMAL);
+  cv::Point click_point(-1, -1);
+  cv::setMouseCallback("SZone", on_mouse, &click_point);
+
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, 1080);
   cap.set(cv::CAP_PROP_FRAME_WIDTH, 1920);
 

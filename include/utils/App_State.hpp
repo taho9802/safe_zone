@@ -1,4 +1,3 @@
-
 #ifndef APP_STATE_HPP
 #define APP_STATE_HPP
 
@@ -23,7 +22,6 @@ enum class Sub_Mode {
 struct App_Mode {
   std::atomic<Main_Mode> main_mode {Main_Mode::NONE};
   std::atomic<Sub_Mode> sub_mode {Sub_Mode::NEUTRAL};
-  std::atomic<cv::Point> mouse_left_location {cv::Point(-1, -1)};
 };
 
 extern App_Mode app_state;
