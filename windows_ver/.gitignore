@@ -1,0 +1,6 @@
+.vscode
+build
+tests/build
+build-debug
+.vs
+out
